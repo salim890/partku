@@ -77,20 +77,28 @@
                                             <div>
                                                 <a href="{{ route('produk.detail', $item['product']->slug) }}" class="product-name-cart">
                                                     {{ $item['product']->name }}
+                                                    {{-- Tampilkan Badge Varian Jika Ada --}}
+                                                    @if($item['variant_name'])
+                                                        <span class="badge bg-secondary ms-1" style="font-size: 0.7rem;">{{ $item['variant_name'] }}</span>
+                                                    @endif
                                                 </a>
                                                 <div class="product-part-cart">Kode: {{ $item['product']->part_number }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="text-center price-text">
-                                        {{ $item['product']->formatted_price }}
+                                        {{-- Gunakan harga dari item (yang sudah disesuaikan dengan varian) --}}
+                                        Rp {{ number_format($item['price'], 0, ',', '.') }}
                                     </td>
                                     <td class="text-center">
-                                        <form action="{{ route('cart.update', $item['product']->id) }}" method="POST">
+                                        {{-- Route update menggunakan $item['key'], bukan product->id --}}
+                                        <form action="{{ route('cart.update', $item['key']) }}" method="POST">
                                             @csrf
                                             @method('PUT')
                                             <input type="number" name="qty" value="{{ $item['qty'] }}" 
-                                                   min="1" max="{{ $item['product']->stock }}" 
+                                                   min="1" 
+                                                   {{-- Ambil stok dari varian jika ada, jika tidak ambil stok produk --}}
+                                                   max="{{ $item['variant_name'] ? \App\Models\ProductVariant::find(explode('_', $item['key'])[1])->stock : $item['product']->stock }}" 
                                                    class="qty-input-cart" 
                                                    onchange="this.form.submit()">
                                         </form>
@@ -99,7 +107,8 @@
                                         Rp {{ number_format($item['subtotal'], 0, ',', '.') }}
                                     </td>
                                     <td class="text-end">
-                                        <form action="{{ route('cart.remove', $item['product']->id) }}" method="POST">
+                                        {{-- Route remove menggunakan $item['key'], bukan product->id --}}
+                                        <form action="{{ route('cart.remove', $item['key']) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-remove" title="Hapus">

@@ -68,6 +68,11 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+    // Relasi ke tabel Varian
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
 
     // Hitung rata-rata rating (misal: 4.5)
     public function getAverageRatingAttribute()

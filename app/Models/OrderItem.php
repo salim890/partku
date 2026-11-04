@@ -9,10 +9,15 @@ class OrderItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'order_id', 'product_id', 'qty', 'price',
-'product_name_snapshot', 'price_snapshot'
+        protected $fillable = [
+        'order_id', 'product_id', 'variant_id', 'qty', 'price',
+        'product_name_snapshot', 'price_snapshot'
     ];
+
+    public function variant()
+    {
+        return $this->belongsTo(ProductVariant::class);
+    }
 
     // Relasi ke Order
     public function order()

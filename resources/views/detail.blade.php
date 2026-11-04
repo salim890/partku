@@ -36,6 +36,11 @@
     .custom-tabs .nav-link { border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 500; padding: 15px 30px; }
     .custom-tabs .nav-link.active { border-bottom-color: #cc0000; color: #cc0000; background: transparent; }
     .tab-content { background: #fff; padding: 30px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px; }
+
+    /* Styling Varian */
+    .variant-btn { display: inline-block; padding: 8px 20px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; margin-right: 10px; margin-bottom: 10px; transition: 0.2s; font-weight: 600; color: #555; }
+    .variant-btn:hover { border-color: #cc0000; color: #cc0000; }
+    .variant-radio:checked + .variant-btn { border-color: #cc0000; background-color: #ffebe6; color: #cc0000; }
 </style>
 @endpush
 
@@ -51,17 +56,12 @@
     </nav>
 
     {{-- Kotak Utama Produk --}}
-    <div class="product-wrapper animate-on-scroll">
+    <div class="product-wrapper">
         <div class="row">
             {{-- Kiri: Gambar --}}
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="main-image-container border rounded">
                     <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
-                </div>
-                <div class="thumbnail-container">
-                    <div class="thumbnail active">
-                        <img src="{{ $product->image_url }}" alt="Thumb 1">
-                    </div>
                 </div>
             </div>
 
@@ -81,9 +81,48 @@
                     </span>
                 </div>
 
-                <div class="product-price">{{ $product->formatted_price }}</div>
+                {{-- Tampilan Harga & Stok Dinamis --}}
+                @php
+                    $hasVariants = $product->variants->count() > 0;
+                    $defaultVariant = $hasVariants ? $product->variants->first() : null;
+                    $displayPrice = $defaultVariant ? $defaultVariant->price : $product->price;
+                    $displayStock = $defaultVariant ? $defaultVariant->stock : $product->stock;
+                @endphp
+
+                <div class="product-price" id="main-price">Rp {{ number_format($displayPrice, 0, ',', '.') }}</div>
 
                 <hr>
+
+                {{-- Form Tambah ke Keranjang --}}
+                <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                    @csrf
+                    
+                    {{-- Pilihan Varian --}}
+                    @if($hasVariants)
+                        <div class="mb-4">
+                            <label class="fw-bold mb-2 d-block">Pilih Varian:</label>
+                            @foreach($product->variants as $index => $variant)
+                                <input type="radio" name="variant_id" value="{{ $variant->id }}" 
+                                       id="variant-{{ $variant->id }}" class="d-none variant-radio" 
+                                       data-price="{{ $variant->price }}" data-stock="{{ $variant->stock }}"
+                                       {{ $index === 0 ? 'checked' : '' }} 
+                                       onchange="updateVariantInfo(this)">
+                                <label for="variant-{{ $variant->id }}" class="variant-btn">
+                                    {{ $variant->name }}
+                                </label>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <div class="stock-info" id="main-stock">stok {{ $displayStock }}</div>
+
+                    <div class="buy-container">
+                        <input type="number" name="qty" class="qty-input" value="1" min="1" max="{{ $displayStock }}">
+                        <button type="submit" class="btn-beli" aria-label="Tambahkan {{ $product->name }} ke keranjang">Beli Sekarang</button>
+                    </div>
+                </form>
+
+                <hr class="mt-4">
 
                 <div class="spec-row">
                     <div class="spec-label">Nama Resmi Produk</div>
@@ -104,70 +143,18 @@
                         <li>Honda {{ $motor }}</li>
                     @endforeach
                 </ul>
-
-                <div class="stock-info">stok {{ $product->stock }}</div>
-
-                <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                    @csrf
-                    <div class="buy-container">
-                        <input type="number" name="qty" class="qty-input" value="1" min="1" max="{{ $product->stock }}">
-                        <button type="submit" class="btn-beli" aria-label="Tambahkan {{ $product->name }} ke keranjang">Beli Sekarang</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        {{-- Tab Bawah --}}
-        <ul class="nav nav-tabs custom-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="deskripsi-tab" data-bs-toggle="tab" data-bs-target="#deskripsi" type="button">Deskripsi</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="ulasan-tab" data-bs-toggle="tab" data-bs-target="#ulasan" type="button">Ulasan Pembeli ({{ $product->review_count }})</button>
-            </li>
-        </ul>
-        
-        <div class="tab-content" id="myTabContent">
-            {{-- Tab Deskripsi --}}
-            <div class="tab-pane fade show active" id="deskripsi" role="tabpanel">
-                <h5 class="mb-3">Detail Produk</h5>
-                <p class="text-muted">{{ $product->description }}</p>
-                <p class="text-muted mt-3">
-                    <strong>Ready Stock.</strong><br>
-                    Pengiriman produk jika checkout & dibayar sebelum jam 16.00 WIB akan dikirim di hari yang sama. 
-                </p>
-            </div>
-            
-            {{-- Tab Ulasan --}}
-            <div class="tab-pane fade" id="ulasan" role="tabpanel">
-                @forelse($product->reviews as $rev)
-                    <div class="border-bottom mb-3 pb-3">
-                        <div class="d-flex justify-content-between">
-                            <strong>{{ $rev->user->name }}</strong>
-                            <span class="text-warning">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <i class="bi bi-star{{ $i <= $rev->rating ? '-fill' : '' }}"></i>
-                                @endfor
-                            </span>
-                        </div>
-                        <p class="mb-1 text-muted small">{{ $rev->created_at->format('d M Y') }}</p>
-                        <p class="mb-0">{{ $rev->comment ?? 'Tidak ada komentar.' }}</p>
-                    </div>
-                @empty
-                    <p class="text-muted text-center py-4">Belum ada ulasan untuk produk ini.</p>
-                @endforelse
             </div>
         </div>
     </div>
-    
+
     {{-- Sering Dibeli Bersama --}}
     @if(isset($recommendations) && $recommendations->count() > 0)
-    <div class="mt-5 pt-4 border-top animate-on-scroll">
+    <div class="mt-5 pt-4 border-top">
         <h4 class="fw-bold mb-4"><i class="bi bi-cart-check text-danger"></i> Sering Dibeli Bersama</h4>
         <div class="row g-3">
             @foreach($recommendations as $rec)
             <div class="col-6 col-md-3">
-                <div class="card h-100 border-0 shadow-sm tilt-card">
+                <div class="card h-100 border-0 shadow-sm">
                     <div style="height: 150px; padding: 10px; display: flex; align-items: center; justify-content: center;">
                         <img src="{{ $rec->image_url }}" alt="{{ $rec->name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
@@ -183,36 +170,26 @@
     </div>
     @endif
 
-    {{-- JSON-LD SCHEMA UNTUK MESIN PENCARI / AI --}}
-    @php
-        $schemaData = [
-            "@context" => "https://schema.org/",
-            "@type" => "Product",
-            "name" => $product->name,
-            "image" => $product->image_url,
-            "description" => $product->description,
-            "sku" => $product->part_number,
-            "brand" => [
-                "@type" => "Brand",
-                "name" => "Honda"
-            ],
-            "offers" => [
-                "@type" => "Offer",
-                "url" => url()->current(),
-                "priceCurrency" => "IDR",
-                "price" => $product->price,
-                "availability" => $product->stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
-            ],
-            "aggregateRating" => [
-                "@type" => "AggregateRating",
-                "ratingValue" => $product->average_rating,
-                "reviewCount" => $product->review_count
-            ]
-        ];
-    @endphp
-    <script type="application/ld+json">
-        {!! json_encode($schemaData, JSON_PRETTY_PRINT) !!}
-    </script>
-
 </div>
+
+@push('scripts')
+<script>
+    function updateVariantInfo(radio) {
+        // Ambil data dari radio yang dipilih
+        let price = radio.getAttribute('data-price');
+        let stock = radio.getAttribute('data-stock');
+
+        // Format Rupiah
+        let formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+        
+        // Update Tampilan Harga & Stok
+        document.getElementById('main-price').innerText = formatter.format(price);
+        document.getElementById('main-stock').innerText = 'stok ' + stock;
+
+        // Update max quantity di input
+        document.querySelector('.qty-input').setAttribute('max', stock);
+    }
+</script>
+@endpush
+
 @endsection

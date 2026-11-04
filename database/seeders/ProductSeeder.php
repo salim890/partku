@@ -12,7 +12,7 @@ class ProductSeeder extends Seeder
     {
         $products = [
             // ===== MESIN - OLI =====
-            ['AHM OIL MPX 2 10W-30 SLMB 0.8L', 'Mesin', 'Beat, Vario, Scoopy, Genio, PCX, ADV', 48000, 'Oli mesin matic original AHM.'],
+            ['AHM OIL MPX 2 10W-30 SLMB', 'Mesin', 'Beat, Vario, Scoopy, Genio, PCX, ADV', 48000, 'Oli mesin matic original AHM.'],
             ['AHM OIL SPX 2 10W-30 SLMB 0.8L', 'Mesin', 'Beat, Vario, PCX, ADV', 55000, 'Oli mesin full synthetic original AHM untuk performa maksimal.'],
             ['AHM OIL MPX 1 10W-30 SLMB 0.8L', 'Mesin', 'Beat, Vario, Scoopy', 43000, 'Oli mesin original AHM untuk perawatan rutin.'],
             ['AHM OIL GARDAN 120ML', 'Mesin', 'Beat, Vario, Scoopy, Genio, PCX, ADV', 18000, 'Oli gardan original AHM untuk motor matic Honda.'],
@@ -82,7 +82,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $index => $p) {
-            Product::create([
+            $product = Product::create([
                 'name' => $p[0],
                 'slug' => Str::slug($p[0]) . '-' . ($index + 1),
                 'part_number' => $partNumbers[$index] ?? 'PK-' . str_pad($index + 1, 4, '0', STR_PAD_LEFT),
@@ -93,6 +93,23 @@ class ProductSeeder extends Seeder
                 'description' => $p[4],
                 'is_popular' => in_array($index, [0, 4, 12, 16, 19, 25, 30, 33]),
             ]);
+
+            // --- TAMBAHAN BARU: LOGIKA VARIAN UNTUK PRODUK PERTAMA (AHM OIL MPX 2) ---
+            if ($index === 0) {
+                \App\Models\ProductVariant::create([
+                    'product_id' => $product->id,
+                    'name' => '0.8 Liter',
+                    'price' => 48000,
+                    'stock' => 20,
+                ]);
+                \App\Models\ProductVariant::create([
+                    'product_id' => $product->id,
+                    'name' => '0.65 Liter',
+                    'price' => 42000,
+                    'stock' => 15,
+                ]);
+            }
+            // -------------------------------------------------------------------------
         }
     }
 }
