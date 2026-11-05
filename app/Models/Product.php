@@ -68,6 +68,16 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+    // Fungsi otomatis untuk menghitung total stok dari semua varian
+    public function getTotalStockAttribute()
+    {
+        // Jika produk punya varian, jumlahkan semua stok varian
+        if ($this->variants()->exists()) {
+            return $this->variants()->sum('stock');
+        }
+        // Jika tidak punya varian, pakai stok biasa
+        return $this->stock;
+    }
     // Relasi ke tabel Varian
     public function variants()
     {

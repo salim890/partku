@@ -180,7 +180,7 @@
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="fw-bold fs-5 text-danger">{{ $product->formatted_price }}</span>
-                                            <small class="text-muted"><i class="bi bi-box-seam"></i> Stok: {{ $product->stock }}</small>
+                                            <small class="text-muted"><i class="bi bi-box-seam"></i> Stok: {{ $product->total_stock }}</small>
                                         </div>
                                         <a href="{{ route('produk.detail', $product->slug) }}" class="btn btn-outline-danger btn-sm w-100">
                                             <i class="bi bi-eye"></i> Lihat Detail
