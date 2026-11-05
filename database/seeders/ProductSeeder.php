@@ -94,22 +94,25 @@ class ProductSeeder extends Seeder
                 'is_popular' => in_array($index, [0, 4, 12, 16, 19, 25, 30, 33]),
             ]);
 
-            // --- TAMBAHAN BARU: LOGIKA VARIAN UNTUK PRODUK PERTAMA (AHM OIL MPX 2) ---
+                       // --- LOGIKA VARIAN UNTUK SEMUA PRODUK OLI ---
+            // Index 0 = AHM OIL MPX 2
             if ($index === 0) {
-                \App\Models\ProductVariant::create([
-                    'product_id' => $product->id,
-                    'name' => '0.8 Liter',
-                    'price' => 48000,
-                    'stock' => 20,
-                ]);
-                \App\Models\ProductVariant::create([
-                    'product_id' => $product->id,
-                    'name' => '0.65 Liter',
-                    'price' => 42000,
-                    'stock' => 15,
-                ]);
+                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 48000, 'stock' => 20]);
+                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 42000, 'stock' => 15]);
             }
-            // -------------------------------------------------------------------------
+            
+            // Index 1 = AHM OIL SPX 2
+            if ($index === 1) {
+                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 55000, 'stock' => 25]);
+                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 48000, 'stock' => 10]);
+            }
+
+            // Index 2 = AHM OIL MPX 1
+            if ($index === 2) {
+                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 43000, 'stock' => 30]);
+                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 38000, 'stock' => 12]);
+            }
+            // --------------------------------------------
         }
     }
 }
