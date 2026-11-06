@@ -19,6 +19,9 @@
                     @if($errors->any()) <div class="text-danger small mb-3">{{ $errors->first() }}</div> @endif
                     <button type="submit" class="btn btn-danger w-100 fw-bold py-2">Masuk</button>
                 </form>
+<div class="text-center mt-2">
+    <a href="{{ route('password.request') }}" class="text-muted small text-decoration-none">Lupa Password?</a>
+</div>
                 <div class="text-center mt-3 small">Belum punya akun? <a href="{{ route('register') }}" class="text-danger fw-bold text-decoration-none">Daftar</a></div>
             </div>
         </div>
