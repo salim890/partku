@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -11,17 +12,23 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $products = [
-            // ===== MESIN - OLI =====
-            ['AHM OIL MPX 2 10W-30 SLMB', 'Mesin', 'Beat, Vario, Scoopy, Genio, PCX, ADV', 48000, 'Oli mesin matic original AHM.'],
-            ['AHM OIL SPX 2 10W-30 SLMB 0.8L', 'Mesin', 'Beat, Vario, PCX, ADV', 55000, 'Oli mesin full synthetic original AHM untuk performa maksimal.'],
-            ['AHM OIL MPX 1 10W-30 SLMB 0.8L', 'Mesin', 'Beat, Vario, Scoopy', 43000, 'Oli mesin original AHM untuk perawatan rutin.'],
-            ['AHM OIL GARDAN 120ML', 'Mesin', 'Beat, Vario, Scoopy, Genio, PCX, ADV', 18000, 'Oli gardan original AHM untuk motor matic Honda.'],
+            // ===== MESIN - OLI (Harga & Motor Sudah Disesuaikan) =====
+            // MPX 1: Oli untuk motor BEBEK/SPORT (JASO MA), bukan Matic
+            ['AHM OIL MPX 1 10W-30', 'Mesin', 'Blade, Revo, Supra X 125, Sonic 150R, CB150R', 76000, 'Oli mesin untuk motor bebek dan sport Honda (kopling basah).'],
+            
+            // MPX 2: Oli untuk motor MATIC (JASO MB)
+            ['AHM OIL MPX 2 10W-30', 'Mesin', 'Beat, Vario, Scoopy, Genio, PCX, ADV', 78500, 'Oli mesin matic original AHM untuk performa harian.'],
+            
+            // SPX 2: Oli Full Synthetic untuk MATIC (JASO MB)
+            ['AHM OIL SPX 2 10W-30', 'Mesin', 'Beat, Vario, PCX, ADV', 93500, 'Oli mesin full synthetic original AHM untuk perlindungan maksimal.'],
+            
+            ['AHM OIL GARDAN 120ML', 'Mesin', 'Beat, Vario, Scoopy, Genio, PCX, ADV', 19500, 'Oli gardan original AHM untuk motor matic Honda.'],
 
             // ===== MESIN - BUSI =====
             ['SPARK PLUG CPR9EA-9 (NGK)', 'Mesin', 'Beat, Vario, Scoopy', 28000, 'Busi standar original NGK untuk motor matic Honda injeksi.'],
             ['SPARK PLUG MR9C-9N (NGK)', 'Mesin', 'Beat FI eSP, Genio', 32000, 'Busi standar original untuk Honda Beat FI eSP.'],
             ['SPARK PLUG MR8K-9 (NGK)', 'Mesin', 'PCX 150', 35000, 'Busi standar original untuk Honda PCX 150.'],
-            ['SPARK PLUG CPR9EAIX-9 (NGK Iridium)', 'Mesin', 'Vario 125/150, PCX', 95000, 'Busi iridium NGK original, umur pakai lebih panjang dan performa lebih baik.'],
+            ['SPARK PLUG CPR9EAIX-9 (NGK Iridium)', 'Mesin', 'Vario 125/150, PCX', 95000, 'Busi iridium NGK original, umur pakai lebih panjang.'],
 
             // ===== MESIN - FILTER =====
             ['ELEMENT COMP, AIR/C (FILTER UDARA) - 17210K16900', 'Mesin', 'Beat FI', 65000, 'Filter udara original Honda untuk Beat FI.'],
@@ -34,7 +41,7 @@ class ProductSeeder extends Seeder
             ['V-BELT COMP DRIVE (23100-K35-1200)', 'CVT', 'Vario 125 eSP', 95000, 'V-belt original Honda untuk Vario 125 eSP.'],
             ['V-BELT COMP DRIVE (23100-K36-1200)', 'CVT', 'Vario 150 eSP', 105000, 'V-belt original Honda untuk Vario 150 eSP.'],
             ['V-BELT COMP DRIVE (23100-K97-601)', 'CVT', 'PCX 150', 125000, 'V-belt original Honda untuk PCX 150.'],
-            ['V-BELT COMP DRIVE (23100-K0J-N01)', 'CVT', 'Beat Deluxe, Scoopy, Genio', 88000, 'V-belt original Honda untuk model terbaru Beat, Scoopy, dan Genio.'],
+            ['V-BELT COMP DRIVE (23100-K0J-N01)', 'CVT', 'Beat Deluxe, Scoopy, Genio', 88000, 'V-belt original Honda untuk model terbaru.'],
             ['V-BELT COMP DRIVE (23100-K1Z-N210-M1)', 'CVT', 'PCX 160, ADV 160', 145000, 'V-belt original Honda untuk PCX 160 dan ADV 160.'],
 
             // ===== CVT - ROLLER =====
@@ -69,7 +76,7 @@ class ProductSeeder extends Seeder
         ];
 
         $partNumbers = [
-            '08232-2MB-K0LZ1', '08234-2MB-K0LZ0', '08232-2MB-K0LZ0', '08294-M99-Z8YN1',
+            '08232-2MB-K0LZ0', '08232-2MB-K0LZ1', '08234-2MB-K0LZ0', '08294-M99-Z8YN1',
             '31926-KYT-901', '31926-KYT-901', '31926-KYT-901', '31926-KYT-901',
             '17210-K16-900', '17210-KVB-930', '17210-K97-N00', '15421-KPL-900',
             '23100-K44-1200', '23100-K35-1200', '23100-K36-1200', '23100-K97-601',
@@ -94,25 +101,28 @@ class ProductSeeder extends Seeder
                 'is_popular' => in_array($index, [0, 4, 12, 16, 19, 25, 30, 33]),
             ]);
 
-                       // --- LOGIKA VARIAN UNTUK SEMUA PRODUK OLI ---
-            // Index 0 = AHM OIL MPX 2
+            // ========================================================
+            // VARIAN LENGKAP & HARGA HET TERBARU (2026)
+            // ========================================================
+
+            // 1. AHM OIL MPX 1 (Hanya 0.8L, 1L, 1.2L - Untuk Bebek/Sport)
             if ($index === 0) {
-                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 48000, 'stock' => 20]);
-                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 42000, 'stock' => 15]);
+                ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 76000, 'stock' => 20]);
+                ProductVariant::create(['product_id' => $product->id, 'name' => '1 Liter',   'price' => 87500, 'stock' => 15]);
+                ProductVariant::create(['product_id' => $product->id, 'name' => '1.2 Liter', 'price' => 98500, 'stock' => 10]);
             }
             
-            // Index 1 = AHM OIL SPX 2
+            // 2. AHM OIL MPX 2 (0.8L & 0.65L - Untuk Matic)
             if ($index === 1) {
-                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 55000, 'stock' => 25]);
-                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 48000, 'stock' => 10]);
+                ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 78500, 'stock' => 25]);
+                ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 67000, 'stock' => 15]);
             }
 
-            // Index 2 = AHM OIL MPX 1
+            // 3. AHM OIL SPX 2 (0.8L & 0.65L - Untuk Matic Full Synthetic)
             if ($index === 2) {
-                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 43000, 'stock' => 30]);
-                \App\Models\ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 38000, 'stock' => 12]);
+                ProductVariant::create(['product_id' => $product->id, 'name' => '0.8 Liter', 'price' => 93500, 'stock' => 20]);
+                ProductVariant::create(['product_id' => $product->id, 'name' => '0.65 Liter', 'price' => 80500, 'stock' => 10]);
             }
-            // --------------------------------------------
         }
     }
 }
