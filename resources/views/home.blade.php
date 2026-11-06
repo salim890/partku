@@ -342,7 +342,7 @@
                     <div class="me-3 text-danger fs-4"><i class="bi bi-geo-alt-fill"></i></div>
                     <div>
                         <h6 class="fw-bold mb-1">Alamat Toko</h6>
-                        <p class="text-muted mb-0">Jl. Merdeka No. 123, Jakarta Pusat, DKI Jakarta 10110</p>
+                        <p class="text-muted mb-0">Gamer, Kec. Pekalongan Tim., Kota Pekalongan, Jawa Tengah 51123</p>
                     </div>
                 </div>
                 <div class="d-flex mb-4">
@@ -354,7 +354,7 @@
                 </div>
 
                 {{-- Tombol Rute ke Google Maps --}}
-                <a href="https://www.google.com/maps/dir/?api=1&destination=-6.175392,106.827153" target="_blank" class="btn btn-danger btn-lg fw-bold shadow">
+                <a href="https://www.google.com/maps/dir/?api=1&destination=-6.889785701689057, 109.69861334479359" target="_blank" class="btn btn-danger btn-lg fw-bold shadow">
                     <i class="bi bi-map"></i> Buka Rute di Google Maps
                 </a>
             </div>
@@ -362,7 +362,7 @@
             <div class="col-lg-7 animate-on-scroll">
                 {{-- Iframe Peta --}}
                 <div class="ratio ratio-16x9 shadow-sm rounded-3 overflow-hidden border">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.619527828951!2d106.8249638147707!3d-6.175392995524962!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5d2e764b12d%3A0x3d2ad6e1e0e9bcc8!2sMonumen%20Nasional!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid" 
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.006398270272!2d109.69605437441913!3d-6.88983596741928!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7025eed5e2fd39%3A0x2faad061242c3c92!2sAHASS%20ANUGERAH!5e0!3m2!1sid!2sid!4v1793951366472!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>" 
                             style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
