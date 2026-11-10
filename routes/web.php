@@ -60,6 +60,8 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/verify-otp', [AuthController::class, 'showVerifyForm'])->name('verify.otp.form');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp.submit');
 
 // Lupa Password
 Route::get('/lupa-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
