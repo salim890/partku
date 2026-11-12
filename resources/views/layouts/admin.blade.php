@@ -23,6 +23,8 @@
         .topbar { background: white; padding: 15px 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
     </style>
     @stack('styles')
+        {{-- Library Chart.js untuk Grafik --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 

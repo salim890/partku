@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/admin/order/{id}/status', [AdminController::class, 'updateStatus'])->name('admin.order.status');
     Route::get('/admin/order/{id}/invoice', [AdminController::class, 'showInvoice'])->name('admin.order.invoice');
     Route::get('/admin/report/{type}', [AdminController::class, 'report'])->name('admin.report');
+    Route::delete('/admin/user/{id}', [AdminController::class, 'deleteUser'])->name('admin.user.delete');
 
     // Admin CRUD Produk
     Route::resource('/admin/products', AdminProductController::class)->names([

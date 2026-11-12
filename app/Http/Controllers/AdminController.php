@@ -12,13 +12,14 @@ use App\Enums\OrderStatus;
 
 class AdminController extends Controller
 {
-    public function index()
+        public function index()
     {
         if (auth()->user()->role !== 'admin') abort(403);
 
-        $orders = Order::with('user')->orderBy('created_at', 'desc')->take(10)->get(); // Hanya tampilkan 10 terbaru di dashboard
+        // 1. Data Pesanan
+        $orders = Order::with('user')->orderBy('created_at', 'desc')->take(10)->get();
         
-        // Metrik Bisnis
+        // 2. Metrik Bisnis
         $validOrders = Order::whereIn('status', ['dikirim', 'selesai'])->get();
         $totalRevenue = $validOrders->sum('total_amount');
         $totalOrders = $validOrders->count();
@@ -31,10 +32,41 @@ class AdminController extends Controller
             $q->whereIn('status', ['dikirim', 'selesai']);
         })->sum('qty');
 
+        // 3. Data Grafik Penjualan (7 Hari Terakhir)
+        $chartLabels = [];
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $chartLabels[] = $date->format('d M');
+            // Hitung total pendapatan di hari itu
+            $dailyRevenue = Order::whereDate('created_at', $date)
+                                 ->whereIn('status', ['dikirim', 'selesai'])
+                                 ->sum('total_amount');
+            $chartData[] = $dailyRevenue;
+        }
+
+        // 4. Data Semua User (Untuk fitur blokir/hapus)
+        $users = User::orderBy('created_at', 'desc')->get();
+
         return view('admin.dashboard', compact(
             'orders', 'totalRevenue', 'totalOrders', 'aov', 
-            'pendingOrders', 'totalCustomers', 'totalProducts', 'totalItemsSold'
+            'pendingOrders', 'totalCustomers', 'totalProducts', 'totalItemsSold',
+            'chartLabels', 'chartData', 'users'
         ));
+    }
+
+    // Fungsi Hapus User (Khusus Admin)
+    public function deleteUser($id)
+    {
+        if (auth()->user()->role !== 'admin') abort(403);
+        
+        $user = User::findOrFail($id);
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+        }
+        
+        $user->delete();
+        return back()->with('success', 'Akun pengguna berhasil dihapus.');
     }
 
     // METHOD BARU: Halaman Laporan dengan Search & Filter

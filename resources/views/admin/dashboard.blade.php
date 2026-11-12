@@ -102,6 +102,12 @@
         </div>
     </div>
 
+        {{-- GRAFIK PENJUALAN --}}
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-graph-up-arrow text-success"></i> Grafik Penjualan (7 Hari Terakhir)</h5>
+        <canvas id="salesChart" height="100"></canvas>
+    </div>
+
     {{-- TABEL PESANAN --}}
     <div class="card border-0 shadow-sm p-4" id="tabel-pesanan">
         <h5 class="fw-bold mb-3">Daftar Pesanan Terbaru</h5>
@@ -199,5 +205,71 @@
 
 @push('scripts')
 
+@endpush
+    {{-- TABEL MANAJEMEN USER --}}
+    <div class="card border-0 shadow-sm p-4 mt-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-people-fill text-primary"></i> Manajemen Pengguna</h5>
+        <div class="table-responsive">
+            <table class="table table-sm table-hover border">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Tanggal Daftar</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($users as $u)
+                    <tr>
+                        <td>{{ $u->name }}</td>
+                        <td>{{ $u->email }}</td>
+                        <td>
+                            @if($u->role === 'admin') <span class="badge bg-danger">Admin</span>
+                            @else <span class="badge bg-secondary">Customer</span> @endif
+                        </td>
+                        <td>{{ $u->created_at->format('d M Y') }}</td>
+                        <td>
+                            @if($u->id !== auth()->id())
+                            <form action="{{ route('admin.user.delete', $u->id) }}" method="POST" onsubmit="return confirm('Yakin hapus akun ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+@push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($chartLabels) !!},
+                datasets: [{
+                    label: 'Pendapatan (Rp)',
+                    data: {!! json_encode($chartData) !!},
+                    backgroundColor: 'rgba(255, 60, 0, 0.7)',
+                    borderColor: 'rgba(255, 60, 0, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
 @endpush
 @endsection
